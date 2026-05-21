@@ -1,0 +1,55 @@
+PER INTERFACE ROUTER OSPF CONFIGURATION
+
+when you do loopbacks, it's easy to do reverse subnet mask..
+(255.255.255.255 to 0.0.0.0)
+
+However, in multiple interfaces, you got to define the network (depending on your ospf config).
+
+Therefore, the address will be network portion and inverse of host portion.
+
+# on exact ip match method you don't need to
+
+# above was matching ospf areas via a subnet.
+
+"network 10.1.1.0 0.0.0.255 area 0"
+
+for network 10.1.1.X 255.255.255.0
+
+- if you do the subnet method, you are required to write similar network commands, matching per interface..
+- don't forget router ospf ID.. (1 in our case) before you give interfaces configs
+
+- this is not the same as the last way of doing this (interface) as you are pointing ospf configs on networks where interfaces reside using addressing.
+
+- the first method, exact ip match, doesn't need reverse subnets, but only matches like a single interface, more appropriate on end router.
+
+
+THE INTERFACE COMMAND FOR OSPF
+
+- just go into the interfaces
+
+- "router ospf ID" first
+
+- "int g0/0" suffice, but no autocomplete
+
+- inside: "ip ospf 1 area 0"
+
+-> easily repeatable for the rest of the connections
+
+-> a bit annoying since no text complete and you might need to go int loop 0 (or some other loopback).
+
+
+- Another annoyance:
+
+when you do show ip protocols, you are not shown routing protocol in "router for networks". can validate via "show ip ospf interface"
+
+ENABLING OSPF ON ALL INTERFACES VIA NETWORK COMMAND (AKA 2ND SUBNET METHOD)
+
+- "network 0.0.0.0 255.255.255.255 area 0"
+
+broadcast, or rather inverse of mask 0.0.0.0, matches everything on matched (ospf is 0). 
+
+- if there is an ospf connection, then all interfaces will come up and connect to the area otherwise they are up and idle with ospf as protocol.
+
+
+- possibly easiest method however it enables ospf whenever interface up.
+

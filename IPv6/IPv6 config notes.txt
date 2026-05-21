@@ -1,0 +1,40 @@
+IPv6 config notes
+
+#ipv6 unicast-routing 
+
+- still have the issue where you need to add a static route to network 
+of other routers.
+
+- this also means that router 3 will have to ping back to router 1 with its own static route too. So you need two static routes anyways.
+
+- usually thru start of same subnet connection of other router end.
+
+so if router 3 is connected to router 2 via interface IP:
+2001:2::1/64, then you use that in both static routes.  
+
+
+- this increases with subsequent routers, as long as you wish to support a backbone:
+Router4(config)#ipv6 route 2001:1::/64 2001:3::1
+Router4(config)#ipv6 route 2001:2::/64 2001:3::1
+- thru router 3, we can ping like 2001:2::2
+-> this is the interface that the static routes saved in r3 
+come from. In same subnet as beginning of connection with r2.
+
+
+-> Now you need to let router 2 and 1 know of this static route, which will be sent to router 3
+
+- aka let router 2 know of 2001:3::/64 aka the router3 to 4 network.
+You send from router 3 entrance (2001:2::2)
+
+
+Now this  should make sense: ipv6 route 2001:3::/64 2001:2::2
+
+
+- now same with r1.
+ipv6 route 2001:3::/64 2001:1::2
+
+- note that the end of network link as ALWAYS how you send to 
+destination. FIRST ADDRESS: DESTINATION, SECOND: NEXT HOP.
+
+
+

@@ -1,0 +1,6 @@
+SPANNING TREE BPDO GUARD
+
+command:
+ spanning-tree bpduguard enable
+
+ 

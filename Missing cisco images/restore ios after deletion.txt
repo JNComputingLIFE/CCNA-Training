@@ -1,0 +1,57 @@
+restore ios after deletion!
+
+- dir flash:
+
+doesn't work
+
+- reset
+
+fails: due to boot process fail, back to router mode
+
+goal: download from server 
+but router doesn't connect..
+
+
+command: tftpdnld
+
+- run without arguments or other commands.
+
+usage: tftpdnld
+  Use this command for disaster recovery only to recover an image via TFTP.
+  Monitor variables are used to set up parameters for the transfer.
+  (Syntax: "VARIABLE_NAME=value" and use "set" to show current variables.)
+  "ctrl-c" or "break" stops the transfer before flash erase begins.
+
+  The following variables are REQUIRED to be set for tftpdnld:
+            IP_ADDRESS: The IP address for this unit
+        IP_SUBNET_MASK: The subnet mask for this unit
+       DEFAULT_GATEWAY: The default gateway for this unit
+           TFTP_SERVER: The IP address of the server to fetch from
+             TFTP_FILE: The filename to fetch
+
+  The following variables are OPTIONAL:
+          TFTP_VERBOSE: Print setting. 0=quiet, 1=progress(default), 2=verbose
+      TFTP_RETRY_COUNT: Retry count for ARP and TFTP (default=7)
+          TFTP_TIMEOUT: Overall timeout of operation in seconds (default=7200)
+         TFTP_CHECKSUM: Perform checksum test on image, 0=no, 1=yes (default=1)
+         FE_SPEED_MODE: 0=10/hdx, 1=10/fdx, 2=100/hdx, 3=100/fdx, 4=Auto(deflt)
+
+- why you need to understand the description? 
+because you need to write "set" in ROMMON
+
+- The global vars of the router: they are set as described by tftpdnld
+
+-> The default gateway is pointing to tftp server. However, the issue is that we do not need to use this since ip addressing is on same subnet. But it is there for the sake of safe routing..
+
+- The great thing about tftpdnld? if you config these global vars then you will be able to just run it with no args as it already set up..
+
+--> you may need to run it again because after some configuration the router will use ROMMON vars to communicate with switch and tftp server
+
+---> dir flash to find the file there. 
+
+------------> reset to boot into that IOS (important)
+
+---------------> then reload to get old router configs from ROMMON
+
+
+

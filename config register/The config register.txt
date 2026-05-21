@@ -1,0 +1,63 @@
+The config register
+
+imagine if test.bin is missing in router configs, causing an outage because config is broken.
+
+Fixing it is a process in of itself
+
+start with ? or help..
+
+Then, check routers that use fallback boot (like a fallback rom)..
+
+the rom monitor will increment for each rom used.
+
+
+OLD CONFIG REGISTER VALUES:
+confreg hexNumber
+
+(or some similar command in modem terminal)
+
+0x2101 -> goes in bootstrap 
+
+2x2100 -> rom monitor mode
+
+0x2142 -> to ignore NVRAM (ignores configs)
+
+0x2102 -> to use NVRAM running config
+
+ROUTER NOT LOADING STARTUP CONFIGS ISSUE:
+- so one router booted but didn't load startup config..
+
+it is actually another config register issue. What to do? 
+check how ios loads. If register is set to ignore nvram, then no startup config.
+
+This is just among many issues that could pop up.
+
+-> easily can find if register is issue by doing "show version" command
+
+if you change in ios you will need to use:
+config-register 0x2102 (you want the running config)
+
+then show version, and then reload...
+
+-issue: if you save running config, you will lose older running config, don't save it. If prompted say no.
+
+old routers (2500, 1600), had ther own OS (in rom), that is
+hex code 0x2101
+
+
+HOW TO FIND AND REMOVE COMMANDS ON BOOT (THAT CAUSE ISSUES)
+
+say your running config is looking to always run test.bin, but it is not there.
+So you see the command twice (cpt bug) and it is random problem (like not finding nonexistent flash files).
+
+- just write no boot system flash test.bin
+
+- more command can read file content in flash..
+so write more "more live-config" (you will find it may have better configs)
+
+- in this case the flash file found named live-config is good.
+copy flash running-config, while source filename is live-config
+
+(destination is running config).. Then you will get a good config running.
+
+   

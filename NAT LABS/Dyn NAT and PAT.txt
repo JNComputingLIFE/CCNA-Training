@@ -1,0 +1,62 @@
+NAT LAB
+
+- no shut interfaces for some reason they are down..
+
+- so do not touch NAT config just yet for some odd reason they already give you dhcp from isp.. be careful as it is down because your inside interface is down.
+enable from the side with no server first.
+
+
+- get dhcp via "ip address dhcp"..
+SPANNING TREE: will converge (can skip forward if you wish). Then you will get dhcp
+
+8.8.8.100 -> in 0/0/1
+
+- tip: you can configure via "ip dhcp pool nameOfPool" 
+key idea is to do this then put it in internal interface to assign ips to pcs using router..
+
+just know that when you add network and default gateway: default-router is 2nd option.
+
+- "show ip dhcp pool" for example to see
+
+-> not needed in labs but do "ip dhcp excluded-addresses 10.1.1.250 10.1.1.254". 
+give a range so router doesn't give its own address to interfaces!!!!
+You will know you excluded an address if you are using it already and you add the command above. It will show as "Excluded addresses"
+
+ROUTER TO ISP COMMUNICATION: NAT TO DNS SERVER
+
+first of all, we are defining that pc gets address from router, but from router to DNS server there is no ADDRESS TRANSLATION
+
+- therefore, define outside address translation router - dns and inside router - pc
+
+- do this inside the interfaces
+
+# this defines the inside/outside interfaces via commandn "ip nat inside/outside"
+
+DEFINING A SOURCE LIST FOUR INSIDE/OUTSIDE DATA
+ip nat inside source list 1 INTERFACEname numberedOrder overload
+
+# source list is basically access list. OVERLOAD is for PAT OVERLOADING
+
+ex. ip nat inside source list 1 interface gigabitEthernet 0/0/1 overload 
+
+
+
+why are you doing it router to isp? because outside nat will need ip addresses from nat. Rather, just one ip overloaded from inside devices.
+
+DEFINE ACL TO PERMIT/DENY OVERLOADED IP DATA
+
+"access-list 1 permit any"
+
+FUNCTION
+any pc, can be natted to router's ip address now.
+Just add an ip on ther router's dhcp pool.
+
+- by the way, you can, for each pc do ipconfig /renew
+
+- how does pat work? As long as a DNS server points to the same, router address, but to a different port number, the router knows (due to its ARP table),
+that it has to send packets to a specific pc, as it knows via inside global port number, due to arp table, to send to translate to a specific pc.
+
+inside global is router's interpretation of ephermemeral port number given by DNS.. it can see that the port number is associated with a specific pc ip..
+
+
+

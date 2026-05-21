@@ -1,0 +1,99 @@
+Subnetting 1 lab
+
+Configure the network as follows:
+1) You have been allocated subnet 192.168.1.0/24. 
+Subnet this into four subnets as follows 
+2) Subnet 1 for site 1
+3) Subnet 2 for the link between R1 and the Internet Router
+4) Subnet 3 for site 2
+5) Subnet 4 for the link between R2 and the Internet Router
+6) Configure the routers per the instructions in the diagram.
+7) Verify that PCs can access cisco.com and facebook.com using their browsers
+
+
+first note that we need 4 subnets therefore you can use 
+2^n formula to steal bits from host (2 ^ 2 bits). Therefore, your hosts start at 0 and get values that require you to take two bits, increasing the mask:
+
+192.168.1.0/26
+192.168.1.64/26
+192.168.1.128/26
+192.168.1.192/26
+
+(due to 00 000000, you do a bitwise and basically on the last addresses.
+compare 11 to 00 01 10 11. BITWISE AND gives 0, 64, 128, 192)
+
+NOTE: it is easy to figure broadcast when you know next network. Just subtract 1 from next network.
+
+if you needed to define the hosts you would use 2^n - 2 since 
+host cannot get subnet/broadcast address.
+
+In a subnet, when you assign first and last host, note that first determine network and its mask. last host is 1 less than broadcast. subnet is 1 less than 1st host.
+
+if one less than subnet addr. then that is broadcast of prev. subnet...
+
+practice when giving hosts addresses like switches, routers and so on:
+
+1. if router connected to switch with devices, it gets last host
+2. then switch gets 2nd last host and so on
+
+CONFIGURING THE ROUTERS:
+
+for each subnet, give the routers last ip. 
+So for 192.168.1.0/26, next subnet is 64. broadcast is 63. last host is 62.
+
+use cisco commands
+- show ip interface brief
+- conf t 
+- int g0/0/0
+don't forget no shut
+- ip address 192.168.1.62 255.255.255.192
+- don't forget to end when done
+
+CONFIGURING THE SWITCHES:
+- just do 2nd last ip in subnet
+- enable, conf t, in config: host S1 (or some other name), int vlan 1 (default selection), no shut and then add 2nd last ip
+- it should also have a default gateway to the router...
+ip default-gateway 192.168.1.62 
+
+end, then test if connects to router.
+If so, then write. The command write saves switch config.
+
+
+
+
+CONFIGURING THE DHCP SERVER:
+- That is the 3rd last subnet host ip
+- Make gateway the router
+- Range is the subnet range
+- user no. less than 62 in subnet 1... don't add more than necessary.
+50 is better for safety sake
+
+CONFIGURING SERIAL LINK 0/1/0 - AKA router to router or subnet to subnet
+
+
+
+
+
+
+
+
+
+
+BOTTOM NOTES FOR CALCULATIONS
+subnet mask is
+left to right up to /number
+with 1.
+
+network is bitwiseAND
+between
+subnet mask and ip address.
+
+broadcast is bitwiseOR
+between
+inverse subnet mask and ip.
+
+BITWISE_AND is 1 only when 
+two 1s.
+
+BITWISE_OR is 0 only when two
+0s.

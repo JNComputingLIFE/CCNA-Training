@@ -1,0 +1,18 @@
+DYNAMIC NAT 
+
+many ips in one..
+
+(2 to 1 in lab. repeat all previous work until this point from pt 2.)
+
+always overload in cpt (works for both static and PAT)
+
+ex. ip nat inside source list 1 interface g0/0/1 overload
+
+(this is what is going to happen to g0/0/0 data is it goes to outside NAT which points to DNS. Essentially 2 ips will become 1). 
+
+in this example we are permitting any data so:
+access-list 1 permit any
+
+- in conclusion this was both static and dynamic nat.
+internal hosts are translated to ip friendly address. 
+

@@ -1,0 +1,22 @@
+ROOT GUARD
+
+how to set root priority
+
+spanning-tree vlan vlanNo. priority 0
+
+(lowest possible and what hackers do to break network)
+
+ packet tracer will show visually that attacker will be root bridge 
+ after this priority hacking.
+
+ PC data goes thru hacker switch..
+
+root guard for entire network steps
+ -use int range again..
+ -spanning-tree guard root (on the selected interfaces)
+ 
+ why not include all ports:
+ because you trust 1 switch to make the connection. 
+ Otherwise no point in making the network, so you got to remove root guard on trusted switch.
+
+  

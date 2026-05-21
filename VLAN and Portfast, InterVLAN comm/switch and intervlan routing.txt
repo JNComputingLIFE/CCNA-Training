@@ -1,0 +1,88 @@
+switch and intervlan routing
+
+you are supposed to give ip addresses to muliple switch interfaces
+(in the Multilayer switch). Then enable inter vlan routing
+
+steps
+- make the vlans with vlan command (1 is default, add 10, 20, 30, 100)
+- you can do this in whatever config mode. See them with show vlan
+- do show ip interface brief to verify that interface is up and add ip as noted by lab.
+- do on a port you wish to assign vlan this: 
+switchport mode access
+
+note: Spanning Tree Protocol (SPT) will recalculate on port. It's actually pretty fast so no problem atp
+
+- then switchport  access vlan portNumber (for each vlan assigned in lab
+start with server, which connects to switch)
+- specify interface to check switchport status:
+show interface interfaceName switchport
+(show int gigabitEthernet 1/0/20 switchport. You will see if switchport is enabled, and if access mode is specified to vlan and what vlan number.)
+
+- so far no trunk aka that is needed later as it is static access
+WARNING: DEPENDING ON SWITCH MODEL you may have to: switchport trunk encapsulate dot1q
+
+switchport mode trunk on beginning connector to the three "management switches"
+- do this for each starting connection  from multi layer switch
+
+note: any switchport mode will cause STP recalculation
+
+THE INTER VLAN ROUTING PART
+(requires switched vlan interfaces configuration)
+
+- int vlan 1, no shut, loopback for the vlan (aka: ip address IP mask). 
+- you can actually (as you add the ip for each vlan), access other interface without exiting interface.
+- other vlans need ips too in this lab (if you make mistake, do no vlan vlanNo. "show vlan" command helps see if vlan is there.)
+
+fact: switched virtual interfaces appear "up" in the vlan database only if the vlans appear in the database..
+
+last step for inter vlan routing...
+
+- ip routing 
+(enables ip routing)
+
+
+THE MANAGED SWITCHES
+
+- has to be trunk mode
+- atp, if you do show vtp status, you will see that it is operating as server. 
+Issue: you have to configure vtp domain in the switch..
+Solution: Either use another way to learn VLANs or make vtp domain on switch with vlans
+
+- vtp domain DomainName
+(show vtp status)
+
+NOTE: now switch will learn the domain (not the vlans. In real life it learns both).
+Which is why you do:
+- vtp mode client
+
+- pretty good...  but this just established vlan passing from one switch to another switch
+
+- now do on port connected to pc's ("network"): switchport access vlanNo.
+
+- one more thing...  before you give access, ensure that you add a vlan ip as before, but make the DEFAULT vlan 1 ip something else (same subnet as loopback of multilayer switch vlan). Then no shut. Now repeat this with specific needs for each switch!
+
+ping to test. Ping the loopback address you set for the vlan.
+
+- ip default-gateway routerIP (AKA switch loopback on default vlan)
+
+
+essentially, first trunking was enabled in switch to switch connection.
+Then, access mode on switch endpoint with devices, but with configured with respective VLAN! You are required to make a default IP for switch SVI (vlan 1 usually), and then you make as default gateway multilayer switch SVI!
+
+PC CONFIGURATION FOR VLAN:
+
+10.1.10.254 - default gateway, for example, also default DNS server,
+for a pc in vlan 10! 
+
+(careful: desktop ip config has bad mask input field, assumes wrong write appr. mask)
+
+SERVER
+
+just do 10.1.100.100 with mask /24 and give the vlan 100 as gateway
+
+RESULT: all devices can ping each-other
+
+  
+
+
+

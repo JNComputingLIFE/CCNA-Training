@@ -1,0 +1,51 @@
+ACCESS CONTROL LISTS
+
+General - bind extended access lists as close to the router as possible 
+
+there is a lot of ip/subnet things going on under the hood.
+
+Recommendation: 
+- use show ip interface brief to 
+
+- access-list ? to see access lists, extended acls, and expanded range versions
+
+when permitting protocols, (goal here is to access or not http server):
+App is http, transport is tcp (at least a cpt is concerned). network is ip,
+data link in ethernet, physical is cat6
+
+- access-list 100 permit tcp host 10.1.2.101 host 10.1.1.100 eq 80
+
+1st host is source, 2nd is destination. eq is just an operator function to give acl. 80 is http. 
+
+
+"Router1(config)#do sh run | include access
+ switchport mode access
+ switchport mode access
+ switchport mode access
+ switchport mode access
+access-list 100 permit tcp host 10.1.2.101 host 10.1.1.100 eq www"
+80 was converted to http
+
+2nd ACL: 2ND PC ONLY ALLOWED TO ACCESS VIA HTTPS
+- same thing but use port 443
+
+ REQ: TO DENY SEPARATE SUBNET ACCESS TO DATA FROM OTHER SUBNET
+
+ access-list 100 deny tcp 10.1.2.0 0.0.0.255 10.1.1.0 0.0.0.255
+
+- in real world, this is where you type log command to enable logging
+
+
+-> show access-lists to confirm
+
+
+ip access-list extended 100
+
+- because then you can access acl, write stuff like no access-list 30
+
+IF YOU BRICK WITH ACLs
+
+- ip you do reload 10, it will reload config and keep it in 10 minutes
+
+- this is good for fallback because you can load config again
+

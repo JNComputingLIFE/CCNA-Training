@@ -1,0 +1,91 @@
+extended ACL, DNS, and more
+
+more subnetting..
+
+100.1.1.100
+100.1.1.101
+
+last octet is a bit of difference. 0110 0100 vs 0110 0101.
+Apparently, you can match both. How?
+
+inverse mask for first 3 octets: 0.0.0
+inverse mask for last octet: 0.0.0.1
+(1 in wildcard because it was either 0 or 1 between 2 addresses).
+so just use that mask when matching both...
+
+so in binary, when 0 means match 1 means don't match..
+- what you did in the subnet mask was loosely match by causing last octet to 
+accept either 0 or 1.
+
+if you want to not accept specific address range, you do this instead:
+access-list aclNo. deny ip sourceIp sourceMask destIp destMask
+
+I will show here how to bind access lists to an interface:
+
+-ip access-group
+
+the rest are surmised by ?
+
+example: ip access-group 100 in
+(since router needed to due to needs of ex. to block or permit from pcs. outbound would be what it would send to the DNS servers)
+
+-> great thing about access-lists command:
+you will see matches as you test the routes
+
+sometimes you will pass thru multiple access lists. Issue?
+
+
+
+MULTIPLE ACCESS LIST (2nd req)
+
+- be careful with this.. in cisco packet tracer you can't log. 
+The issue with cpt having no such feature is that if you want to (like in problem and often in exams) to not allow external traffic to pass thru device subnet
+(10.1.2.0)
+
+- however, if you are ever going to resolve an ip address to a DOMAIN NAME like cisco.com, google.com and so on..
+Know this...
+
+DNS Replies are external, udp packets with port 53: ergo breaking the req
+
+so what you do is permit udp packets in port 53 
+
+
+- access-list 101 permit udp host 8.8.8.8 eq 53 10.1.2.0 0.0.0.255
+very simple to do. what this means is that destination allows replies from 
+dns replies.
+-> now requests to google need NAT to go to the internet so this is unrealistic
+in multiple fronts though yes it will work
+
+REGARDING RETURNING TRAFFIC (FROM  HTTP)
+
+- issue is: http as app layer protocol doesn't just send tcp with source port 80.
+Maybe we can have ftp traffic too so do not for compatibility's sake note it down with source port. Certainly an advantage of named commands.
+
+
+- trivia: access-list 101 permit tcp any 10.1.2.0 0.0.0.255 established 
+
+"established" means setting ACK bit. So TCP three way handshake 
+ - > USUALLY SIN BIT IS SET. THerefore on returned packet set up ACK traffic.
+
+ it solves your problem for cisco lab. Issue: in real life, hacking tools can easily spoof your ACK.  That is why stateful firewalls are valuable.
+
+ - this does solve your problem though, allowing return traffic like DNS resolves or just general http data to come back from server....
+
+ - the last denying traffic acl is simple in comparison to what was noted just to deny for subnet you need.
+don't forget: deny ip any.. since you are looking for addresses to block, not services..
+
+Extended IP access list 101
+    10 permit tcp any 10.1.1.0 0.0.0.255 eq www
+    20 permit tcp any 10.1.1.0 0.0.0.255 eq 443
+    30 permit udp host 8.8.8.8 eq domain 10.1.2.0 0.0.0.255
+    40 permit tcp any 10.1.2.0 0.0.0.255 established
+    50 deny ip any 10.1.2.0 0.0.0.255
+
+you will get something like this. most complicated left to note is "domain". 
+when you configure, traditionally you write after eq a source port. It will resolve to "domain" if you write the correct port 53 for DNS.
+
+
+ then do in matching interface ip access-group 101 in 
+
+
+ 

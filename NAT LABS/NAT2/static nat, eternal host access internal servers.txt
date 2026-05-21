@@ -1,0 +1,41 @@
+STATIC NAT
+
+in real cisco devices:
+
+ip nat inside source static tcp 10.1.1.1 80 2.2.2.2 80 extendable 
+
+for http.. extendable because you can make dynamic nat one ip to multiple (in range). But this is static example in cpt so there isn't a function like that 
+
+compare with: ip nat inside source static tcp 10.1.1.100 80 8.8.8.200 80 
+
+FULL STATIC NAT
+- we needed it for ftp
+- reason likely to not specify ports is same as why it is needed for ftp.
+
+-> in http not needed since we need to define the port numbers (not full static)
+- issue is that in ftp server likely better to translate all NAT 
+
+- ip nat inside source static 10.1.1.101 8.8.8.201
+
+(not even protocol is defined, just translates all data out of router dhcp'd interface to 8.8.8.201. it is an inside source because it is taking data from in the router to ftp server)
+
+
+!static nat with port numbers is more secure
+
+TESTING
+- http: type domain from server or 8.8.8.200
+- ftp:
+Cisco Packet Tracer PC Command Line 1.0
+C:\>ftp myftp.com
+Trying to connect...myftp.com
+Connected to myftp.com
+220- Welcome to PT Ftp server
+Username:
+
+
+
+TRIVIA:
+
+ftp control uses port 21. (client to server due to passive mode. tcp. can be opposite if not passive)
+
+- FTP DATA: port 20  

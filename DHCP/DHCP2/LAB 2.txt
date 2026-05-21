@@ -1,0 +1,20 @@
+THIS IS DHCP LAB 2
+en, conf t, interface vlanx, then there you write:
+ip helper-address X.X.X.X which will point dhcp propely.
+
+but don't forget router needs to:
+1. add switch vlans in dhcp pools (both network, which needs to be shared and address of individual vlan)
+2. add static route or any route really to them..
+
+ip route (network), mask ,next hop (forwarding address)
+ you need at least forwarded loopback address (was 1.1.1.1 for router)
+for switch to know 10.1.1.254 after enabling routing.
+
+In router you need to add both vlans thru switch aka 10.1.1.1
+
+
+-> ENABLE IP ROUTING VIA:
+ip routing 
+ 3. show run | include ip routing 
+needed on switch config otherwise only you will get dhcp but no router connection
+

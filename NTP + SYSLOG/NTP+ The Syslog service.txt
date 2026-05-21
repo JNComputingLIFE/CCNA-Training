@@ -1,0 +1,34 @@
+The Syslog service
+just enable in gui in services
+
+go check if router connects with syslog server.
+
+
+- easy to enable: logging
+
+ex: logging host IP or just logging IP..
+
+do end to exit global config.. now it will log that and entry where it starts
+
+This one is helpful for a general view of configurations of router/switch log messages
+
+THE NTP CONFIGURATION, so you have timestamps
+
+- just enable it
+
+- the router/switch have wrong timestamp. The NTP server can provide 
+correct date/time so configure that..
+
+-> !!!done through "service timestamps"..
+
+ex. service timestamps log datetime msec
+
+log to connect it with logs (if offered by a server, syslog..)
+
+- it will connect NTP server to router and can give datetime info to syslog server which you can see..
+
+THE NTP CONFIGURATION THAT CAN CHANGE PER DEVICE DATE TIME
+
+- ntp server IPOFNTPSERVER
+
+(from router/switch) 

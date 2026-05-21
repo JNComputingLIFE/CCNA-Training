@@ -1,0 +1,152 @@
+RoAS and telephony
+
+
+% Configuring IP routing on a LAN subinterface is only allowed if that
+subinterface is already configured as part of an IEEE 802.10, IEEE 802.1Q,
+or ISL vLAN.
+
+
+if you get this while configuring vlan interfaces, then the issue stems from you not enabling trunking aka 802.1Q on parent interface. just write encapsulation "dot1Q vlanNo. native" (usually default vlan, untagged. Reason it untagged is you don't have vlan management yet, and you send untagged data to a device like pc)
+
+
+only thing to note with the lab:
+as long as your dhcp pool from router for ip phones exists, you got to set option codes to connect to tftp server too. (150. Usually what dhcp codes are for in ccna context).
+
+- as is normal with dhcp, add excluded-range via command:
+"ip dhcp excluded-address 10.1.100.200 10.1.100.254" (data vlan)
+also for voice vlan. Issue: be careful, since you want to assign specific ip ranges to devices, the ip above will exclude the entire subnet. Example of addressing and networking application in dhcp configuration...
+
+
+SWITCH CONFIG
+
+often times, telephony may not work. So just shut down some ports and enable them again.
+
+- ENABLING CDP:
+"cdp run"
+(enables cdp)
+
+"show cdp neighbors"
+
+- do int range 1/0/2-4 since you want to apply similar config to all neighbors 
+
+- switchport mode access. then switchport voice vlan 101 (since data ran thru router untagged).
+> this command is particularly interesting because actually it configures static access on cpt not access.
+> allows both tagged/untagged data: special type of access port.
+
+
+- remember when it was noted that switchport used to be configured as trunk for ip phones, but had broadcast issues. So what was done?
+They pruned trunk port to only accept tagged and untagged vlan data with switchport static access (enabled from mode access).
+
+odd phrasing but gets function accross: "access auto pruning trunk port"
+
+- show cdp neighbors
+
+- then show power inline
+answers a requirement. 10W is drawn from switch with more avail.
+
+
+ADDRESSES TO EXCLUDE ON ROUTER DHCP SERVICE
+Router(config)#ip dhcp excluded-address 10.1.100.200 10.1.100.254
+Router(config)#ip dhcp excluded-address 10.1.101.200 10.1.101.254
+
+Router#show ip dhcp binding 
+IP address       Client-ID/              Lease expiration        Type
+                 Hardware address
+10.1.101.1       00D0.BA6A.B528           --                     Automatic
+10.1.101.3       0004.9A05.0DC7           --                     Automatic
+10.1.101.2       0090.0CB1.438E           --                     Automatic
+Router#
+
+- you got to be careful but also a wait for convergence.
+
+- oh also enable cdp on router as before. then you will see the neighbors from router via RoAS.
+
+WHAT TO DO IF YOU DON'T SEE THE NEIGHBORS
+1. wait a bit (spt of switch, or dhcp DORA)
+2. if you have mistakenly included some addresses (poor addressing).
+After correction, no shut interfaces and wait again.
+
+DON'T FORGET TO CONFIGURE PC DHCP REQUESTS, AND WAIT FOR SPT CONVERGENCE
+
+- also ipconfig /renew on terminal to get ip afterwards if you wish
+
+MAKE TELEPHONY SERVICE
+
+- at end they should get ips.
+
+- if you make addressing mistake, often phones may have trouble getting ips.
+
+#telephony-service 
+Router(config-telephony)#max-ephones 3
+Router(config-telephony)#max-dn 3
+
+addressing: ip source-address IPNo. port 2000
+
+- auto assign 1 to 3 
+(as many as you have on switch)
+
+after exiting telephony config:
+#ephone-dn 1
+Router(config-ephone-dn)#%LINK-3-UPDOWN: Interface ephone_dsp DN 1.1, changed state to up
+Router(config-ephone-dn)#number 1000
+
+exit ephone-dn config. now the phone will be registered.
+
+CONFIGURING EPHONE SERVICE USING ROUTER CUCM
+
+- "ephone No."
+
+- inside ephone config (not same as ephone dn), specify "ephone type"
+
+- "type 7960", an old, very common ephone type (or legacy)
+
+- "button X:X" 1:1, aka button 1 to dn1, 2nd to 2nd and so on..
+
+- an amazing thing: with auto assign, you don't need to configure prices.
+
+- exit to continue checking/configuring for the rest
+
+fact: if phones not binded to dhcp of router, they won't get telephony service.
+
+important: if you face issue, good tip is troubleshooting. At this point, restart cpt but not before you write on every NMS device.
+
+FIXING UNDERLYING ISSUES 
+
+"show ephone"
+
+- if idle it is on hook, no calls
+
+- there is a gui to go off hook to emulate phones..
+
+dial by typing number. no need to hit send it should auto recognize
+
+# one phone should be on hook (idle). you will see its off hook phone number. it will get a call and even say connected.
+
+
+Congratulations
+
+PINGING THE IP PHONES
+
+This worked by default initially. So after call dial test  do pings to all phones. PCs can ping all phone addresses just like they can ping other pcs
+
+NOTE: when trying to ping 10.1.1.253 which is the switch, 
+you will notice that it might take a while 1st ping.
+
+"tracert" like earlier labs to see ping from router to switch as it should be.
+
+TESTING
+
+- in switch: show power inline
+- show cdp neighbors 
+- (platform should be model number like 7960, which it is on what i did)
+
+though in physical phones and switches, you would get SEPXXXXXXXXXXX x as in mac address. 
+
+- pcs pinging switch test go as you would expect 
+
+normal info: g729, state connected on phone session, packets sent and received (not on cpt but on real devices).
+
+
+TEST - from phone 2 dial 1000, and dial will be received on gui.
+ 
+

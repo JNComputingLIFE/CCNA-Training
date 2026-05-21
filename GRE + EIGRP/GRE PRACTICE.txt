@@ -1,0 +1,55 @@
+Tunneling and EIGRP
+
+*** Tasks:
+1) Configure the customer routers (C1 & C2) to use DHCP addresses 
+on G0/0/1 and a static IP address on G0/0/0 
+
+steps: go to g0/0/1, ip dhcp address, then g0/0/0, give /24 mask ip. no shut both ints. ping last resort route. It is def route via 0.0.0.0. 
+
+traceroute from c1 to c2 addr. you will see successful pings and simulated internet routing hops.
+
+
+2) Create a DHCP pool on the customer routers to allocate 
+IP addresses to the PCs
+
+c1 and c2 routers must have the pool.
+steps:
+you usually cant decide pool name in exam. Continue onto making a pool for both customer routers ((conf) global config mode).
+default-router command: the int connecting pc (c1 10.1.1.1).
+Use exclusion range if you want separate address for client pcs.
+
+
+
+3) Configure a GRE Tunnel between C1 and C2 so that PC 1 and 
+PC 2 can ping each other using RFC 1918 addresses
+
+c1 and c2 gre tunnel needed...
+you can create an interface of tunnel type.
+
+steps: after global config you made the tunnel int 0, put ip respective to same subnet of customer router. In real world, please use /30 mask. For source you can use either interface or int ip addr. In real world, destination and source make static. Since in lab you get from dhcp it may not be issue, but it is in real world. 
+
+
+- note: if tunnel int up, know that it not necessarily mean it working.
+
+steps: same reflecting config of tunnel on c2 side. Again, won't work if it up necessarily. Initial pings take a while as well. Ping the tunnel of other side for test.
+
+
+core routers don't know. fix tunneling to internet. Advertise via routing protocol (eigrp).
+
+4) Use EIGRP AS 100 as the routing protocol in the customer network
+
+use router advertisement to put data in tunnel.
+
+steps: go to each customer router configure eigrp AS 100. 
+- should learn from c1 router 10.1.1.0 and from c2 10.1.2.0.
+- tunnel int ip...
+- now it can ping whatever inbound int address. (10.1.1.1 or 10.1.2.1)
+
+- traceroute should disappear internet routers.
+
+
+5) Verification: 
+- C1 and C2 can ping each other G0/0/0 interfaces
+- PC 1 and PC 2 can ping each other
+
+

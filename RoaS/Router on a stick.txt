@@ -1,0 +1,90 @@
+Router on a stick
+
+make sub interfaces (this is a requred step)
+- just do int g0/0/0.1 (depends on router interface naming)
+
+native  Make this as native vlan
+  <cr>
+- R1(config-subif)#encapsulation dot1q 1 native 
+
+AKA your untagged vlan is your management vlan..
+
+
+- encapsulation dot1q vlanNo. for any other subinterface (they aren't native don't add that)
+
+tip: name them like vlans aka g0/0/0.10 
+
+other tip: your native vlan should refer to router ip.
+It should include all of subnet. Do so via loopback router ip...
+
+example 10.1.1.0/24, you configure ip 10.1.1.254/24
+(aka loopback to local subnet for each interface)
+
+- the switch put in default vlan the ip...
+
+VLAN Context:
+
+In inter-vlan routing, we learned that it is essentially required to enable trunking for switches to pass vlans (usually via a vtp server)..
+Switches by default route all traffic to vlan 1, a sane default.
+
+What does this mean for RoaS? 
+
+It means that the router can pass data through the default vlan subnet..
+however, your vlans separate the network.
+
+The issue?
+
+no inter vlan routing as long as you do not define the switch mode as trunk
+so it gets data from router. (If it was a switch you may need to make mode trunk too). In additon specific interfaces may need to only access one vlan. Last, you may need to configure encapsulation again..
+
+- so go to interface connecting to router and:
+switchport mode trunk
+
+NOTE: very simple to confirm switchport data per interface (check if encapsulation!):
+show interfaces gigabitEthernet 1/0/1 switchport  
+
+- now go to device connections, and give router vlan subnets to devices via
+switchport mode access. 
+
+- access vlan via switchport access vlan vlanNo.
+
+Issue: you may need a vtp server 
+
+COMPUTER CONFIGURATIONS
+
+- as you have set up the vlans!
+- DNS servers, gateways can be the loopback of the vlans. Simply put.. make them
+match the subnet of the router vlans.
+- routers are easier than switches to configure aka router on a stick.
+Just make router subinterfaces.. Switches need to make a vtp server.
+
+IF YOU WANT EVERYONE TO TALK TO EACH OTHER
+- for example, you can't ping switch from pc
+- well, enable ip routing
+- then define an "ip default-gateway".
+command is just what is in quotes plus the ip  of the router in this case, add it to switch.
+
+(ip default-gateway 10.1.1.254 ), where ip is router ip. we made it last subnet ip (before broadcast of course. we added it in default vlan aka native one we made was vlan 1). 
+
+
+KEY NOTE:
+
+when you make inter vlan routing... it was necessary to add ip routing!!
+however that was for a switch that replicated router (in inter vlan routing, multilayer).
+
+- no ip routing
+
+# since router handles it just fine, switches can't be routing themselves 
+(managed by router instead). If we weren't doing RoaS, then switch that is vtp server needs to in contrary enable routing via ip routing
+
+WHAT DOES THIS MEAN?
+
+if use ip default-gateway, don't use ip routing! 
+Why? because the switch is getting routing from gateway. You do not need it in 
+that particular switch unless you are making it some VTP server (aka giving vlans)
+
+EXAM SUGGESTION:
+copy running-config startup-config
+
+- do this command after finalizing any router/switch config
+do this instead of wr...

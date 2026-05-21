@@ -1,0 +1,27 @@
+PORT SECURITY 
+
+switchport port-security
+
+switchport mode access is required to configure security of ports.
+
+-> show port-security..
+default allow 1 mac address, otherwise shut down port.
+
+ write the command above on interface so ... interfaceName (after commannd)
+
+ the addresses sent to port security are saved via sticky mac addresses
+
+ - sticky mac addresses only work if first device you connect with is one that you trust
+
+  you can also manually define a mac address.
+
+-> 3 security modes:
+protect - drop packet
+shutdown - shuts port
+restricts - drops packets of unknown source until 
+below maximum value in policy
+
+- switchport port-security maximum
+(default is one)
+
+

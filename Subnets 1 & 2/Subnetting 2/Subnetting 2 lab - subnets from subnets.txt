@@ -1,0 +1,27 @@
+lab 2 - subnets from subnets
+
+The real first step of the problem:
+binary to find subnets of subnets..
+of note is first subnet:
+192.168.1.64/28
+192.168.1.80/28
+192.168.1.96/28
+192.168.1.112/28
+
+the last subnet will be used for a link (don't forget /30 is router router interface connections). 
+
+Therefore, what is needed is to split 2 host per subnet again so use
+2 ^ n - 2 again (since you want /30 you know this gives 2 needed):
+
+255.255.255.11200 00, 01, 10, 11 AKA 0 (.112/30), .116/30, .120/30, .124/30
+
+This is good to use if you wish to split a router to router connection safely.
+
+From lab one, you can do something like this now...
+Go to router 1, and define serial to begin with first/last ip pattern like before.
+
+Then, router 2 gets last ones like before. It will be more secure.
+
+The rest is what you expect...
+
+

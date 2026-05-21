@@ -1,0 +1,27 @@
+PORTFAST - FAST BUT LOOPS
+
+- cisco proprietary
+
+- "bypasses listening and learning" 
+
+- if connected to a layer 2 switch may cause loops
+
+
+WHAT PORTFAST SOLVES
+if it takes some time to get an ip address from dhcp (if ports transition into forwarding then listening state they may get stuck later at learning state)
+- ironically it can prevent or make loops
+
+
+normally spanning tree takes 30seconds to converge and forward packets..
+- so portfast prevents this and is more helpful for modern networks
+
+steps:
+1.give a hostname with hostname command.
+2. int range gX/X/X - Y (where X-Y is connected devices)
+3. spanning-tree portfast  
+- loops can happen. That's why it only available in non-trunking mode.
+
+it will move states immediately to forwarding ((AKA forwarding packets..))
+
+
+
