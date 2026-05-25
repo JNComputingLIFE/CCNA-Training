@@ -1,1 +1,7 @@
 Appliances: Dynamips, IOSvL2
+requires licenses
+
+A networking project that implements managed switches, access switches
+and connects them to the internet via GRE tunneling. Then managed switches links are managed with Port-channel.
+
+Protocols - STP, DTP, Etherchannel, EIGRP, NTP.
